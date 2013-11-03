@@ -1,0 +1,83 @@
+@CHARSET "UTF-8";
+
+html,body,div,p,table,td,tr,a,li,ul,img,h1,h2,h3,h4 {
+	margin: 0;
+	padding: 0;
+	font-size: 12px;
+	font-family: Arial, Verdana, sans-serif;
+	color: #475059;
+}
+
+
+table {
+	border-collapse: collapse;
+}
+
+
+form {
+	overflow: hidden;
+	margin: 10px 0;
+}
+
+form input {
+	float: left;
+	margin-right: 10px;
+}
+
+form .size_restriction {
+	font-weight: bold;
+	color: #000000;
+	display: block;
+	float: right;
+	padding-top: 4px;
+}
+
+.errors {
+	margin: 10px 0 10px 10px;	
+}
+
+.errors .error {
+	color: red;
+	font-weight: bold;
+}
+	
+	
+.file_list {
+	list-style: none;
+}
+
+.file_list li {
+	min-height: 20px;
+	margin: 3px 0;
+	background: #f4f4f4;
+	padding: 3px 5px;
+	overflow: hidden;
+}
+
+.file_list .delete {
+	display: block;
+	float: right;
+	height: 14px;
+	border: 1px solid silver;
+	text-decoration: none;
+	padding: 1px 10px 3px;
+	border-radius: 5px;
+	margin-right: 10px;
+	background: #ffffff;	
+}
+
+.file_list a:hover {
+	color: red;
+}
+	
+.file_list .size {
+	display: block;
+	float: right;
+	width: 80px;
+	color: #000000;
+	padding-top: 2px;
+	text-align: center;
+}	
+	
+	
+	
