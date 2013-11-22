@@ -235,6 +235,46 @@
 		}
 		
 		
+		public static function serveFile($stored_filename, $content_type, $filename) {
+			$path = Application::getSitePath() . self::getStorageDirectory($stored_filename) . "/$stored_filename";
+			
+			$fsize = @filesize($path);			
+			$fname = rawurlencode(self::getSafeFilename($filename));
+			
+			header("Content-type: $content_type");
+			header("Content-length: $fsize");
+			header("Content-Disposition: attachment; filename*=UTF-8''$fname");
+			
+			@copy($path, 'php://output');
+			die();			
+		}
+		
+		public static function getSafeFilename($filename) {
+			$filename = coreFormattingLibrary::plaintext($filename);
+			
+			$remove = array(			 
+				',',
+				';',
+				'`',
+				'~',
+				'%',
+				'\\',
+				'/',
+				'«',
+				'»',
+				'<',
+				'>',
+				'"',
+				"'",				
+				"!",
+				"?"
+			);
+			$filename = str_replace($remove, ' ', $filename);
+			$filename = preg_replace('/\s+/', ' ', $filename);
+			return $filename;
+		}
+		
+		
 		
 	}
 	
