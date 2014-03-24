@@ -15,7 +15,7 @@
 			$this->entity_name = $entity_name;
 			$this->entity_id = $entity_id;
 			$this->params = $params;
-			
+						
 			$this->Value = $this->hash = md5(uniqid());
 		}
 

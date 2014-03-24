@@ -10,6 +10,7 @@
 		public $mime_type;
 		public $size;
 		public $seq;
+		public $field_name;
 		public $field_hash;
 		public $is_temporary;
 		

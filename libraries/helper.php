@@ -13,6 +13,7 @@
 			if (!isset($_SESSION[$session_name])) $_SESSION[$session_name] = array();
 			
 			$_SESSION[$session_name][$field_hash] = array(
+				'field_name' => $aName,
 				'entity_name' => $entity_name,
 				'entity_id' => $entity_id,
 				'params' => $params
@@ -62,12 +63,14 @@
 		}
 		
 		
-		public static function loadFiles(&$entity_or_array, $list_fieldname, $storage_entity_name='file') {			
+		public static function loadFiles(&$entity_or_array, $fieldname, $storage_entity_name='file') {			
 			if (!$entity_or_array) return;
 			$array_given = is_array($entity_or_array);
 			if (!$array_given) $entity_or_array = array($entity_or_array);
 			
 			$mapping = array();
+			
+			$list_fieldname = $fieldname . '_list';
 			
 			foreach($entity_or_array as $entity) {
 				$entity->$list_fieldname = array();
@@ -88,6 +91,10 @@
 			
 			$db = Application::getDb();
 			$condition = implode(' OR ', $condition);
+			
+			$sfieldname = $fieldname;
+			$condition .= " AND field_name='$sfieldname' ";
+			
 			$file = Application::getEntityInstance($storage_entity_name);
 			
 			$load_params = array();
@@ -133,13 +140,15 @@
 			$file = Application::getEntityInstance($storage_entity_name);
 			$table = $file->getTableName();
 			
+			$scount_fieldname = addslashes($count_fieldname); 
+			
 			$sql = "
 				SELECT 
 					entity_name,
 					entity_id,
 					COUNT(*) AS files_count 
 				FROM $table
-				WHERE $condition
+				WHERE $condition AND field_name='$scount_fieldname'
 				GROUP BY entity_name, entity_id
 			";
 			

@@ -8,6 +8,7 @@
 		protected $entity_name;
 		protected $entity_id;
 		protected $params;
+		protected $field_name;
 		
 		protected $entity;
 		protected $errors;
@@ -35,6 +36,7 @@
 			$this->entity_name = $session_data['entity_name'];
 			$this->entity_id = $session_data['entity_id'];
 			$this->params = $session_data['params'];
+			$this->field_name = $session_data['field_name'];
 						
 			if (!$this->entity_name) return $this->terminate();
 			
@@ -184,6 +186,7 @@
 			$file->size = $this->uploaded_file_info['size'];
 			$file->field_hash = $this->field_hash;
 			$file->is_temporary = 1;
+			$file->field_name = $this->field_name;
 		
 		}
 				
@@ -259,7 +262,9 @@
 			}
 			else {
 				$file_list_params['where'][] = "$table.field_hash='$this->field_hash'";
-			}			
+			}
+			$sfield_name = addslashes($this->field_name);
+			$file_list_params['where'][] = "$table.field_name='$sfield_name'";			
 			
 			return $file_list_params;
 			
