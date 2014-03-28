@@ -116,10 +116,12 @@
 			$array_given = is_array($entity_or_array);
 			if (!$array_given) $entity_or_array = array($entity_or_array);
 			
+			$object_fieldname = $count_fieldname . '_count';
+			
 			$mapping = array();
 			
 			foreach($entity_or_array as $entity) {
-				$entity->$count_fieldname = 0;
+				$entity->$object_fieldname = 0;
 				$entity_name = $entity->getName();
 				if (!isset($mapping[$entity_name])) $mapping[$entity_name] = array();
 				$mapping[$entity_name][(int)$entity->id] = $entity;
@@ -151,12 +153,11 @@
 				WHERE $condition AND field_name='$scount_fieldname'
 				GROUP BY entity_name, entity_id
 			";
-			
 						
 			$data = $db->executeSelectAllObjects($sql);
 			
 			foreach($data as $item) {				
-				$mapping[$item->entity_name][$item->entity_id]->$count_fieldname = $item->files_count;
+				$mapping[$item->entity_name][$item->entity_id]->$object_fieldname = $item->files_count;				
 			}
 			
 			if (!$array_given) $entity_or_array = array_shift($entity_or_array);
@@ -203,12 +204,12 @@
 		}
 		
 		
-		public static function copyExistingFile($entity, $file_path) {
+		public static function copyExistingFile($entity, $file_path, $field_name) {
 
-			if (!is_file($file_path)) {
+			/*if (!is_file($file_path)) {
 				return false;
 				die("copyExistingFile: File $file_path not found");
-			}
+			}*/
 			
 			$stored_filename = md5(uniqid());
 			$extension = self::getFileExtension($file_path);
@@ -224,7 +225,8 @@
 			
 			$storage_path = "$storage_dir/$stored_filename.$extension";
 			
-			if (!copy($file_path, $storage_path)) {
+			if (!@copy($file_path, $storage_path)) {
+				return false;
 				die("copyExistingFile: Can't copy file");
 			}
 			
@@ -236,6 +238,7 @@
 			$file->original_filename = basename($file_path);
 			$file->size = filesize($storage_path);
 			$file->field_hash = '';
+			$file->field_name = $field_name;
 			$file->is_temporary = 0;
 			
 			$file->save();
