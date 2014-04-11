@@ -203,6 +203,68 @@
 		}
 		
 		
+		public static function copyFiles($src_entity, $dest_entity, $storage_entity_name='file') {
+			if (!$src_entity) return false;
+			if (!$dest_entity) return false;
+						
+			$src_entity_id = $src_entity->getId();
+			$dest_entity_id = $dest_entity->getId();
+			if (!$src_entity_id) return false;
+			if (!$dest_entity_id) return false;
+			
+			$src_entity_name = $src_entity->getName();
+			$dest_entity_name = $dest_entity->getName();
+			
+			
+			$file = Application::getEntityInstance($storage_entity_name);
+			$table = $file->getTableName();
+			$ssrc_entity_name = addslashes($src_entity_name);
+			
+			$load_params = array();
+			$load_params['where'][] = "$table.entity_name='$ssrc_entity_name'";
+			$load_params['where'][] = "$table.entity_id='$src_entity_id'";
+			
+			$data = $file->load_list($load_params);
+			
+			foreach($data as $item) {
+				$file_path = Application::getSitePath() . self::getStorageDirectory($item->stored_filename) . '/' . $item->stored_filename;
+				
+				$extension = self::getFileExtension($item->stored_filename);
+				$stored_filename = md5(uniqid());
+				$storage_dir = Application::getSitePath() . self::getStorageDirectory($stored_filename);
+				
+				if (!is_dir($storage_dir)) {
+					if (!@mkdir($storage_dir, 0777, true)) {
+						die("copyFiles: Can't create directory $storage_dir");
+					}
+				}
+				
+				$storage_path = "$storage_dir/$stored_filename.$extension";
+			
+				if (!copy($file_path, $storage_path)) {
+					die("copyFiles: Can't copy file");
+				}
+				
+				
+				$copied_file = Application::getEntityInstance('file');
+				
+				$copied_file->entity_name = $dest_entity_name;
+				$copied_file->entity_id = $dest_entity_id;			
+				$copied_file->stored_filename = "$stored_filename.$extension";
+				$copied_file->original_filename = $item->original_filename;
+				$copied_file->size = filesize($storage_path);
+				$copied_file->field_hash = '';
+				$copied_file->is_temporary = 0;
+				$copied_file->field_name = $item->field_name;
+				
+				$copied_file->save();
+				
+			}
+			
+			return true;
+			
+		}
+		
 		public static function copyExistingFile($entity, $file_path) {
 
 			if (!is_file($file_path)) {
