@@ -99,7 +99,7 @@
 			
 			$load_params = array();
 			$load_params['where'] = array($condition);
-			$load_params['group_by'] = array('entity_name', 'entity_id'); 
+			//$load_params['group_by'] = array('entity_name', 'entity_id'); 
 			
 			$data = $file->load_list($load_params);
 			

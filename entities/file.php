@@ -41,6 +41,7 @@
 			$this->entity_id = (int)$this->entity_id;
 			$this->seq = (int)$this->seq;
 			$this->is_temporary = !(bool)$this->entity_id;
+			$this->is_temporary = (int)$this->is_temporary;
 			$this->size = (int)$this->size;
 			if (!$this->seq) $this->seq = $this->getSeq();
 
