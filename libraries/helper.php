@@ -266,7 +266,7 @@
 			
 		}
 		
-		public static function copyExistingFile($entity, $file_path) {
+		public static function copyExistingFile($entity, $file_path, $field_name) {
 
 			/*if (!is_file($file_path)) {
 				return false;
