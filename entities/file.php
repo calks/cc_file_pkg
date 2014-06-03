@@ -54,7 +54,7 @@
 		public function load_list($params=array()) {
 			$list = parent::load_list($params);
 			foreach($list as $item) {
-				$item->url = Application::getSiteUrl() . filePkgHelperLibrary::getStorageDirectory($item->stored_filename) . '/' . $item->stored_filename; 
+				$item->url = Application::getSeoUrl(filePkgHelperLibrary::getStorageDirectory($item->stored_filename) . '/' . $item->stored_filename); 
 			}
 			
 			return $list;
