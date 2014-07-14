@@ -24,15 +24,15 @@
 				
 			$this->deleteTemporaryFiles();
 			
-			$this->field_hash = @array_shift($params);
+			$this->field_hash = @array_shift($params);			
 			if (!$this->field_hash) return $this->terminate();
 			 
 			$session_name = filePkgHelperLibrary::getSessionName();
+			
 			if (!isset($_SESSION[$session_name][$this->field_hash])) return $this->terminate();
 			
 			$session_data = $_SESSION[$session_name][$this->field_hash];
-			
-			
+						
 			$this->entity_name = $session_data['entity_name'];
 			$this->entity_id = $session_data['entity_id'];
 			$this->params = $session_data['params'];
@@ -40,9 +40,17 @@
 						
 			if (!$this->entity_name) return $this->terminate();
 			
-			if (!Application::entityExists($this->entity_name)) return $this->terminate();
+			$check_entity_existance = isset($this->params['entity_existance_check']) ? $this->params['entity_existance_check'] : true;
+
+			if ($check_entity_existance) {				
+				if (!Application::entityExists($this->entity_name)) return $this->terminate();
+				$this->entity = Application::getEntityInstance($this->entity_name);
+				if ($this->entity_id) {
+					$this->entity = $this->entity->load($this->entity_id);
+					if (!$this->entity) return $this->terminate();
+				}				
+			}
 			
-			$this->entity = Application::getEntityInstance($this->entity_name);
 			
 			$this->files = array();
 			$file = Application::getEntityInstance($this->getEntityName());
@@ -51,12 +59,6 @@
 			
 			$this->task = @array_shift($params);
 			if (!$this->task) $this->task = 'list';
-			
-			
-			if ($this->entity_id) {
-				$this->entity = $this->entity->load($this->entity_id);
-				if (!$this->entity) return $this->terminate();
-			}
 			
 			
 			$method = 'task' . coreNameUtilsLibrary::underscoredToCamel($this->task);
@@ -80,9 +82,7 @@
 		
 		
 		protected function terminate() {
-			/*echo Debug::getTraceSummary();
-			die('Something gone wrong...');*/
-			return 'Something gone wrong...';
+			return 'Something gone wrong...';			
 		}
 		
 		
@@ -264,7 +264,8 @@
 				$file_list_params['where'][] = "$table.field_hash='$this->field_hash'";
 			}
 			$sfield_name = addslashes($this->field_name);
-			$file_list_params['where'][] = "$table.field_name='$sfield_name'";			
+			$file_list_params['where'][] = "$table.field_name='$sfield_name'";
+			//$file_list_params['show_sql'] = 1;			
 			
 			return $file_list_params;
 			
