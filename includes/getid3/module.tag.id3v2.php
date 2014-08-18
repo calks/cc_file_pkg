@@ -994,6 +994,7 @@ class getid3_id3v2 extends getid3_handler
 			//   Sync identifier (terminator to above string)   $00 (00)
 			//   Time stamp                                     $xx (xx ...)
 
+					
 			$frame_offset = 0;
 			$frame_textencoding = ord(substr($parsedFrame['data'], $frame_offset++, 1));
 			if ((($id3v2_majorversion <= 3) && ($frame_textencoding > 1)) || (($id3v2_majorversion == 4) && ($frame_textencoding > 3))) {
@@ -1012,19 +1013,32 @@ class getid3_id3v2 extends getid3_handler
 
 			$timestampindex = 0;
 			$frame_remainingdata = substr($parsedFrame['data'], $frame_offset);
+			
+			
 			while (strlen($frame_remainingdata)) {
+				
+				
 				$frame_offset = 0;
-				$frame_terminatorpos = strpos($frame_remainingdata, $this->TextEncodingTerminatorLookup($frame_textencoding));
+				//$frame_terminatorpos = strpos($frame_remainingdata, $this->TextEncodingTerminatorLookup($frame_textencoding));
+				$frame_terminatorpos = $this->findTerminatorPos($frame_remainingdata, $this->TextEncodingTerminatorLookup($frame_textencoding));
+				
+				
 				if ($frame_terminatorpos === false) {
 					$frame_remainingdata = '';
 				} else {
 					if (ord(substr($frame_remainingdata, $frame_terminatorpos + strlen($this->TextEncodingTerminatorLookup($frame_textencoding)), 1)) === 0) {
-						$frame_terminatorpos++; // strpos() fooled because 2nd byte of Unicode chars are often 0x00
+						//$frame_terminatorpos++; // strpos() fooled because 2nd byte of Unicode chars are often 0x00
 					}
-					$parsedFrame['lyrics'][$timestampindex]['data'] = substr($frame_remainingdata, $frame_offset, $frame_terminatorpos - $frame_offset);
+					$line = substr($frame_remainingdata, $frame_offset, $frame_terminatorpos - $frame_offset);
+					$line = str_replace(array("\xFF\xFE", "\xFE\xFF"), '', $line);
+					$line = str_replace(array("\x20\x19", "\x19\x20"), "'", $line);
+					$parsedFrame['lyrics'][$timestampindex]['data'] = $line;
 
 					$frame_remainingdata = substr($frame_remainingdata, $frame_terminatorpos + strlen($this->TextEncodingTerminatorLookup($frame_textencoding)));
-					if (($timestampindex == 0) && (ord($frame_remainingdata{0}) != 0)) {
+
+					$empty_line_with_null_timestamp = getid3_lib::BigEndian2Int(substr($frame_remainingdata, 0, strlen($this->TextEncodingTerminatorLookup($frame_textencoding)) + 4)) == 0;
+					
+					if (($timestampindex == 0) && (ord($frame_remainingdata{0}) != 0 || $empty_line_with_null_timestamp)) {
 						// timestamp probably omitted for first data item
 					} else {
 						$parsedFrame['lyrics'][$timestampindex]['timestamp'] = getid3_lib::BigEndian2Int(substr($frame_remainingdata, 0, 4));
@@ -1033,6 +1047,7 @@ class getid3_id3v2 extends getid3_handler
 					$timestampindex++;
 				}
 			}
+			//print_r($parsedFrame); die();
 			unset($parsedFrame['data']);
 
 
@@ -1327,7 +1342,7 @@ class getid3_id3v2 extends getid3_handler
 				$frame_imagetype = substr($parsedFrame['data'], $frame_offset, 3);
 				if (strtolower($frame_imagetype) == 'ima') {
 					// complete hack for mp3Rage (www.chaoticsoftware.com) that puts ID3v2.3-formatted
-					// MIME type instead of 3-char ID3v2.2-format image type  (thanks xbhoffØpacbell*net)
+					// MIME type instead of 3-char ID3v2.2-format image type  (thanks xbhoffï¿½pacbell*net)
 					$frame_terminatorpos = strpos($parsedFrame['data'], "\x00", $frame_offset);
 					$frame_mimetype = substr($parsedFrame['data'], $frame_offset, $frame_terminatorpos - $frame_offset);
 					if (ord($frame_mimetype) === 0) {
@@ -2338,7 +2353,7 @@ class getid3_id3v2 extends getid3_handler
 			SOS	Somalia
 			SPL	Seborga
 			SRG	Suriname
-			STD	São Tome and Principe
+			STD	Sï¿½o Tome and Principe
 			SVC	El Salvador
 			SYP	Syria
 			SZL	Swaziland
@@ -2362,13 +2377,13 @@ class getid3_id3v2 extends getid3_handler
 			VND	Viet Nam
 			VUV	Vanuatu
 			WST	Samoa
-			XAF	Communauté Financière Africaine
+			XAF	Communautï¿½ Financiï¿½re Africaine
 			XAG	Silver
 			XAU	Gold
 			XCD	East Caribbean
 			XDR	International Monetary Fund
 			XPD	Palladium
-			XPF	Comptoirs Français du Pacifique
+			XPF	Comptoirs Franï¿½ais du Pacifique
 			XPT	Platinum
 			YER	Yemen
 			YUM	Yugoslavia
@@ -2812,7 +2827,7 @@ class getid3_id3v2 extends getid3_handler
 			vai	Vai
 			ven	Venda
 			vie	Vietnamese
-			vol	Volapük
+			vol	Volapï¿½k
 			vot	Votic
 			wak	Wakashan Languages
 			wal	Walamo
@@ -3323,6 +3338,19 @@ class getid3_id3v2 extends getid3_handler
 		return getid3_lib::EmbeddedLookup($framename, $begin, __LINE__, __FILE__, 'id3v2-framename_short');
 	}
 
+	
+	protected static function findTerminatorPos($data, $terminator) {
+		$step = strlen($terminator);
+		for ($i=0; $i<strlen($data); $i+=$step) {						
+			$portion = substr($data, $i, $step);
+			$next_portion = ($i+$step) < strlen($data) ? substr($data, $i+$step, $step) : null;
+			if ($portion===$terminator) {
+				return $i;
+			} 
+		}
+		return false;
+	}
+	
 	public static function TextEncodingTerminatorLookup($encoding) {
 		// http://www.id3.org/id3v2.4.0-structure.txt
 		// Frames that allow different types of text encoding contains a text encoding description byte. Possible encodings:
