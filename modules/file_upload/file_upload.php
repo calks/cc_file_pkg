@@ -66,7 +66,7 @@
 				$content = call_user_func(array($this, $method), $params);
 				if (in_array($this->task, array('commit', 'count', 'files'))) return $content;
 				
-				$css_url = $this->getStaticFileUrl('/css/style.css');
+				$css_url = $this->getStaticFilePath('/css/style.css');
 				
 				$smarty = Application::getSmarty();
 				$smarty->assign('content', $content);
