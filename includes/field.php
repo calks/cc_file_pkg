@@ -19,9 +19,20 @@
 			$this->Value = $this->hash = md5(uniqid());
 		}
 
-		function GetAsHTML() {
-			
+
+		function GetAsHTML() {			
 			if (!$this->Value) $this->Value = $this->hash;
+			else $this->hash = $this->Value;			
+			
+			$session_name = filePkgHelperLibrary::getSessionName();
+			if (!isset($_SESSION[$session_name])) $_SESSION[$session_name] = array();
+			
+			$_SESSION[$session_name][$this->hash] = array(
+				'field_name' => $this->Name,
+				'entity_name' => $this->entity_name,
+				'entity_id' => $this->entity_id,
+				'params' => $this->params
+			);			
 			
 			$hidden_field_html = THiddenField::GetAsHTML();
 			
@@ -34,6 +45,7 @@
 			echo "<iframe src=\"$iframe_src\" width=\"$iframe_width\" height=\"$iframe_height\" border=0 style=\"border: none\"></iframe>";
 			
 		}
+				
 		
 		function getIframeSrc() {
 			return Application::getSeoUrl("/file_upload/$this->Value");
