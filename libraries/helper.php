@@ -29,13 +29,13 @@
 				return '0';
 			}
 			elseif ($size < 1024) {
-				return number_format($size, 0, ',', ' ') . ' байт';
+				return number_format($size, 0, ',', ' ') . Application::gettext(' byte');
 			}
 			elseif ($size < 1024*1024) {
-				return number_format($size/1024, 2, ',', ' ') . ' Кб';
+				return number_format($size/1024, 2, ',', ' ') . Application::gettext(' KB');
 			}
 			else {
-				return number_format($size/1024/1024, 2, ',', ' ') . ' Мб';
+				return number_format($size/1024/1024, 2, ',', ' ') . Application::gettext(' MB');
 			}						
 		}
 		

@@ -6,7 +6,7 @@
 			<input class="upload" type="file" name="file">
 			<input class="button" type="submit" name="submit" value="Загрузить">
 			
-			<span class="size_restriction">Ограничение на размер: {$upload_max_size}</span>
+			<span class="size_restriction">Max size: {$upload_max_size}</span>
 		</form>
 	{/if}	
 	
