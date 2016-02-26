@@ -122,19 +122,19 @@
 			
 			$fieldname = 'file';
 			if (!isset($_FILES[$fieldname])) {
-				$this->errors[] = "Файл не загружен";
+				$this->errors[] = $this->gettext('File was not uploaded');
 				return false;	
 			}			
 			
 			$res = $_FILES[$fieldname];
 			if ($res['error'] != 0) {
-				if ($res['error'] != 4) $this->errors[] = 'Ошибка при загрузке файла';	
-				else $this->errors[] = "Файл не загружен";
+				if ($res['error'] != 4) $this->errors[] = $this->gettext('Uploading error');	
+				else $this->errors[] = $this->gettext('File was not uploaded');
 				return false;
 			}
 			
 			if (!is_uploaded_file(@$res['tmp_name'])) {
-				$this->errors[] = 'Не найден загруженный файл';
+				$this->errors[] = $this->gettext("Can't find uploaded file");
 				return false;
 			}
 				
@@ -144,7 +144,7 @@
 			
 			$extension = filePkgHelperLibrary::getFileExtension($original_file_name);
 			if (!$this->isExtensionValid($extension)) {
-				$this->errors[] = "Недопустимый формат файла: $extension";
+				$this->errors[] = $this->gettext("Wrong file format: $extension");
 				return false;
 			}
 						
@@ -158,7 +158,7 @@
 			$stored_file_path = Application::getSitePath() . $stored_file_directory . '/' . $stored_file_name;
 			
 			if (!move_uploaded_file($uploaded_file_path, $stored_file_path)) {
-				$this->errors[] = "Не удалось переместить загруженный файл";
+				$this->errors[] = $this->gettext('Failed to move uploaded file');
 				return false;                	
 			}
 			
