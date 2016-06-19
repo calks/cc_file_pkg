@@ -99,7 +99,7 @@
 			$path = Application::getSitePath() . $dir;
 			if (!is_dir($path)) {
 				if (!mkdir($path, 0777, true)) {
-					$this->errors[] = "Не удалось создать директорию для сохранения файла";
+					$this->errors[] = $this->gettext("Can't create file storage directory");
 					return null;
 				}
 			}
@@ -144,7 +144,7 @@
 			
 			$extension = filePkgHelperLibrary::getFileExtension($original_file_name);
 			if (!$this->isExtensionValid($extension)) {
-				$this->errors[] = $this->gettext("Wrong file format: $extension");
+				$this->errors[] = $this->gettext('Wrong file format: %s', $extension);
 				return false;
 			}
 						
@@ -212,7 +212,7 @@
 		protected function taskDelete($params=array()) {
 			$id_to_delete = (int)array_shift($params);
 			if (!$id_to_delete) {
-				$this->errors[] = "Не передан ID файла";
+				$this->errors[] = 'No file ID supplied';
 				return $this->taskList();	
 			}
 			
@@ -220,12 +220,12 @@
 			$file = $file->load($id_to_delete);
 			
 			if (!$file) {
-				$this->errors[] = "Файл не найден";
+				$this->errors[] = 'File not found';
 				return $this->taskList();				
 			}
 			
 			if ($file->entity_name != $this->entity_name && $file->entity_id != $this->entity_id) {
-				$this->errors[] = "Нельзя удалить файл, назначенный другому объекту";
+				$this->errors[] = "You can't delete other object files";
 				return $this->taskList();
 			}
 			
@@ -265,7 +265,6 @@
 			}
 			$sfield_name = addslashes($this->field_name);
 			$file_list_params['where'][] = "$table.field_name='$sfield_name'";
-			//$file_list_params['show_sql'] = 1;			
 			
 			return $file_list_params;
 			
@@ -303,6 +302,7 @@
 			$smarty->assign('files_limit_reached', $files_limit_reached);
 			
 			$smarty->assign('upload_max_size', filePkgHelperLibrary::getUploadMaxSize());
+			$smarty->assign('module', $this);
 			
 			$template = $this->getTemplatePath('list');
 			
