@@ -3,7 +3,7 @@
 	Application::loadLibrary('olmi/field');
 
 	class TEntityFilesField extends coreHiddenFormField {
-		
+				
 		protected $entity_name;
 		protected $entity_id;
 		protected $params;
@@ -28,7 +28,7 @@
 			if (!isset($_SESSION[$session_name])) $_SESSION[$session_name] = array();
 			
 			$_SESSION[$session_name][$this->hash] = array(
-				'field_name' => $this->Name,
+				'field_name' => $this->field_name,
 				'entity_name' => $this->entity_name,
 				'entity_id' => $this->entity_id,
 				'params' => $this->params
