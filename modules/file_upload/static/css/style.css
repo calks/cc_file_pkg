@@ -1,6 +1,20 @@
 @CHARSET "UTF-8";
 
-html,body,div,p,table,td,tr,a,li,ul,img,h1,h2,h3,h4 {
+html,
+body.file-form-field,
+.file-form-field div, 
+.file-form-field p, 
+.file-form-field table,
+.file-form-field td, 
+.file-form-field tr,
+.file-form-field a,
+.file-form-field li,
+.file-form-field ul,
+.file-form-field img,
+.file-form-field h1,
+.file-form-field h2,
+.file-form-field h3,
+.file-form-field h4 {	
 	margin: 0;
 	padding: 0;
 	font-size: 12px;
@@ -9,22 +23,22 @@ html,body,div,p,table,td,tr,a,li,ul,img,h1,h2,h3,h4 {
 }
 
 
-table {
+.file-form-field table {
 	border-collapse: collapse;
 }
 
 
-form {
+.file-form-field form {
 	overflow: hidden;
 	margin: 10px 0;
 }
 
-form input {
+.file-form-field form input {
 	float: left;
 	margin-right: 10px;
 }
 
-form .size_restriction {
+.file-form-field form .size_restriction {
 	font-weight: bold;
 	color: #000000;
 	display: block;
@@ -32,21 +46,21 @@ form .size_restriction {
 	padding-top: 4px;
 }
 
-.errors {
+.file-form-field .errors {
 	margin: 10px 0 10px 10px;	
 }
 
-.errors .error {
+.file-form-field .errors .error {
 	color: red;
 	font-weight: bold;
 }
 	
 	
-.file_list {
+.file-form-field .file_list {
 	list-style: none;
 }
 
-.file_list li {
+.file-form-field .file_list li {
 	min-height: 20px;
 	margin: 3px 0;
 	background: #f4f4f4;
@@ -54,10 +68,9 @@ form .size_restriction {
 	overflow: hidden;
 }
 
-.file_list .delete {
+.file-form-field .file_list .delete {
 	display: block;
-	float: right;
-	height: 14px;
+	float: right;	
 	border: 1px solid silver;
 	text-decoration: none;
 	padding: 1px 10px 3px;
@@ -66,11 +79,11 @@ form .size_restriction {
 	background: #ffffff;	
 }
 
-.file_list a:hover {
+.file-form-field .file_list a:hover {
 	color: red;
 }
 	
-.file_list .size {
+.file-form-field .file_list .size {
 	display: block;
 	float: right;
 	width: 80px;

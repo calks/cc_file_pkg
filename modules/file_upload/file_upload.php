@@ -24,7 +24,8 @@
 				
 			$this->deleteTemporaryFiles();
 			
-			$this->field_hash = @array_shift($params);			
+			$this->field_hash = @array_shift($params);
+						
 			if (!$this->field_hash) return $this->terminate();
 			 
 			$session_name = filePkgHelperLibrary::getSessionName();
@@ -63,21 +64,47 @@
 			
 			$method = 'task' . coreNameUtilsLibrary::underscoredToCamel($this->task);
 			if (method_exists($this, $method)) {
-				$content = call_user_func(array($this, $method), $params);
-				if (in_array($this->task, array('commit', 'count', 'files'))) return $content;
-				
-				$css_url = $this->getStaticFilePath('/css/style.css');
-				
 				$smarty = Application::getSmarty();
-				$smarty->assign('content', $content);
-				$smarty->assign('css_url', $css_url);				
-								
-				$template_path = $this->getTemplatePath();
-				die($smarty->fetch($template_path));
+				$smarty->assign('field_id', $this->field_hash);
+				$this->html = call_user_func(array($this, $method), $params);				
+				return $this->returnResponse();
 			}
 			else {				
 				return $this->terminate();
 			}			
+		}
+		
+		
+		protected function returnResponse() {
+			$css_url = $this->getStaticFilePath('/css/style.css');
+			
+			if ($this->isAjax()) {
+				$this->response_data['css'][] = $css_url;
+				return parent::returnResponse();
+			}
+			else {				
+				if (in_array($this->task, array('commit', 'count', 'files'))) {
+					return $this->html;
+				}
+				else {
+					$smarty = Application::getSmarty();
+					$smarty->assign('content', $this->html);
+					$smarty->assign('css_url', $css_url);
+					$template_path = $this->getTemplatePath();
+					die($smarty->fetch($template_path));
+				}
+				
+			}
+		
+		}
+		
+
+		protected function composeAjaxResponse() {
+			foreach ($this->errors as $e) {
+				Application::stackError($e);
+			}
+			$this->errors = array();
+			return parent::composeAjaxResponse();
 		}
 		
 		
@@ -201,8 +228,14 @@
 				$file = Application::getEntityInstance($this->getEntityName());
 				$this->populateDbRecord($file);
 				$file->save();
-				$redirect_url = Application::getSeoUrl("/{$this->getName()}/$this->field_hash");
-				Redirector::redirect($redirect_url);								
+				
+				if ($this->isAjax()) {
+					return $this->taskList();
+				}
+				else {
+					$redirect_url = Application::getSeoUrl("/{$this->getName()}/$this->field_hash");
+					Redirector::redirect($redirect_url);
+				}
 			}
 			else {
 				return $this->taskList();
@@ -295,7 +328,9 @@
 			
 			$smarty = Application::getSmarty();
 			$smarty->assign('form_action', $form_action);
-			$smarty->assign('errors', $this->errors);
+			if (!$this->isAjax()) {
+				$smarty->assign('errors', $this->errors);
+			}
 			$smarty->assign('files', $this->files);
 			
 			$max_files = isset($this->params['max_files']) ? (int)$this->params['max_files'] : 0;

@@ -5,7 +5,10 @@
 
 </head>
 <body>
+
+	<script type="text/javascript">
+		//parent.{$field_id}('{$content}');
+	</script>
 	
-	{$content}
 
 </body></html>
