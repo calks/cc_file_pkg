@@ -2,8 +2,8 @@
 
 	Application::loadLibrary('olmi/field');
 
-	class TEntityFilesField extends THiddenField {
-		
+	class TEntityFilesField extends coreHiddenFormField {
+				
 		protected $entity_name;
 		protected $entity_id;
 		protected $params;
@@ -11,7 +11,7 @@
 		
 		
 		function __construct($aName, $entity_name=null, $entity_id=null, $params=array()) {
-			parent::TField($aName);
+			parent::__construct($aName);
 			$this->entity_name = $entity_name;
 			$this->entity_id = $entity_id;
 			$this->params = $params;
@@ -28,13 +28,13 @@
 			if (!isset($_SESSION[$session_name])) $_SESSION[$session_name] = array();
 			
 			$_SESSION[$session_name][$this->hash] = array(
-				'field_name' => $this->Name,
+				'field_name' => $this->field_name,
 				'entity_name' => $this->entity_name,
 				'entity_id' => $this->entity_id,
 				'params' => $this->params
 			);			
 			
-			$hidden_field_html = THiddenField::GetAsHTML();
+			$hidden_field_html = parent::GetAsHTML();
 			
 			$iframe_src = $this->getIframeSrc();
 			$iframe_width = isset($this->params['width']) ? $this->params['width'] : 800;
