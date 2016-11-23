@@ -78,24 +78,22 @@
 		protected function returnResponse() {
 			$css_url = $this->getStaticFilePath('/css/style.css');
 			
-			if ($this->isAjax()) {
-				$this->response_data['css'][] = $css_url;
-				return parent::returnResponse();
+			if (in_array($this->task, array('commit', 'count', 'files'))) {
+				return $this->html;
 			}
-			else {				
-				if (in_array($this->task, array('commit', 'count', 'files'))) {
-					return $this->html;
-				}
+			else {
+				if ($this->isAjax()) {
+					$this->response_data['css'][] = $css_url;
+					return parent::returnResponse();
+				}					
 				else {
 					$smarty = Application::getSmarty();
 					$smarty->assign('content', $this->html);
 					$smarty->assign('css_url', $css_url);
 					$template_path = $this->getTemplatePath();
 					die($smarty->fetch($template_path));
-				}
-				
+				}				
 			}
-		
 		}
 		
 
