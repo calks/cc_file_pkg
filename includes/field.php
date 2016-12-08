@@ -20,7 +20,7 @@
 		}
 
 
-		function GetAsHTML() {			
+		function render() {			
 			if (!$this->Value) $this->Value = $this->hash;
 			else $this->hash = $this->Value;			
 			
@@ -34,7 +34,7 @@
 				'params' => $this->params
 			);			
 			
-			$hidden_field_html = parent::GetAsHTML();
+			$hidden_field_html = parent::render();
 			
 			$iframe_src = $this->getIframeSrc();
 			$iframe_width = isset($this->params['width']) ? $this->params['width'] : 800;
