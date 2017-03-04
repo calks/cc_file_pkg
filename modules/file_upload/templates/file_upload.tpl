@@ -4,11 +4,7 @@
 	<link rel="stylesheet" type="text/css" href="{$css_url}">
 
 </head>
-<body>
 
-	<script type="text/javascript">
-		//parent.{$field_id}('{$content}');
-	</script>
-	
-
+<body class="file-form-field">
+	{$content}
 </body></html>
