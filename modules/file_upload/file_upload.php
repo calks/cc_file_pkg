@@ -143,9 +143,8 @@
 		}
 		
 		
-		protected function doUpload() {
-			
-			$fieldname = 'file';
+		protected function doUpload($fieldname='file') {
+						
 			if (!isset($_FILES[$fieldname])) {
 				$this->errors[] = $this->gettext('File was not uploaded');
 				return false;	
