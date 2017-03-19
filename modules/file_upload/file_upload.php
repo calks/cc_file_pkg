@@ -297,6 +297,15 @@
 			$sfield_name = addslashes($this->field_name);
 			$file_list_params['where'][] = "$table.field_name='$sfield_name'";
 			
+			$valid_extensions = $this->getValidExtensions();
+			if ($valid_extensions) {
+				$extension_condition = array();
+				foreach ($valid_extensions as $ve) {
+					$extension_condition[] = "$table.stored_filename LIKE '%.$ve'";
+				}
+				$file_list_params['where'][] = '(' . implode(' OR ', $extension_condition) . ')';
+			}
+			
 			return $file_list_params;
 			
 		}
