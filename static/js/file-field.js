@@ -10,7 +10,8 @@
 				
 		me.container = jQuery('#' + field_id);
 		
-		me.css = {};		
+		me.css = {};
+		me.js = {};
 		
 		if (me.fileApiSupported()) {
 			me.renderField();
@@ -78,6 +79,13 @@
 				
 				link.on('click', function(event){					
 					event.preventDefault();
+										
+					var confirmation_text = link.attr('data-confirmation-text');
+					
+					if (confirmation_text && !confirm(confirmation_text)) {
+						return;
+					}
+					
 		            jQuery.ajax({
 		                url: jQuery(this).attr('href'),
 		                type: 'post',
@@ -139,8 +147,10 @@
 			var me = this;
 			var content = response.content || null;
 			var css_list = response.css || [];
+			var js_list = response.js || [];
 			
 			me.addStylesheets(css_list);
+			me.addScripts(js_list);
 			me.setLoadedContent(content);
 			
 			var messages = response.messages || {};
@@ -169,8 +179,22 @@
 					me.css[css_path] = 1;					
 				}				
 			});
+		},
+		
+		addScripts: function(js_list) {			
+			var me = this;
+			jQuery.each(js_list, function(idx, js_path){		
+				
+				if (typeof(me.js[js_path]) == 'undefined') {					
+					var head = document.head;
+				    var link = document.createElement('script');
+					link.type = 'text/javascript'					
+					link.src = js_path;
+					head.appendChild(link);
+					me.js[js_path] = 1;
+				}				
+			});
 		}
-			
 			
 	}
 	
