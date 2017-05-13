@@ -61,16 +61,22 @@ body.file-form-field,
 }
 
 .file-form-field .file_list li {
-	min-height: 20px;
+	min-height: 28px;
 	margin: 3px 0;
 	background: #f4f4f4;
 	padding: 3px 5px;
 	overflow: hidden;
 }
 
+.file-form-field .file_list li > div,
+.file-form-field .file_list li > span {
+	line-height: 22px;
+}
+
+.file-form-field input[type=submit],
+.file-form-field input[type=button],
 .file-form-field .file_list .delete {
-	display: block;
-	float: right;	
+	display: block;		
 	border: 1px solid silver;
 	text-decoration: none;
 	padding: 1px 10px 1px;
@@ -80,6 +86,12 @@ body.file-form-field,
 	font-weight: normal;	
 }
 
+.file-form-field .file_list .delete {
+	float: right;
+}
+
+.file-form-field input[type=submit]:hover,
+.file-form-field input[type=button]:hover,
 .file-form-field .file_list .delete:hover,
 .file-form-field .file_list a:hover {
 	color: red;
@@ -90,8 +102,7 @@ body.file-form-field,
 	display: block;
 	float: right;
 	width: 80px;
-	color: #000000;
-	padding-top: 2px;
+	color: #000000;	
 	text-align: center;
 }	
 	

@@ -79,10 +79,16 @@
 				
 				link.on('click', function(event){					
 					event.preventDefault();
-										
+					
 					var confirmation_text = link.attr('data-confirmation-text');
 					
 					if (confirmation_text && !confirm(confirmation_text)) {
+						return;
+					}
+					
+					var href = jQuery(this).attr('href');
+										
+					if (href.match(/^#.*/)) {
 						return;
 					}
 					
