@@ -125,7 +125,7 @@
 	                type: 'post',
 	                dataType: 'json',
 	                xhr: function() {
-	                    myXhr = $.ajaxSettings.xhr();
+	                    myXhr = jQuery.ajaxSettings.xhr();
 	                    if(myXhr.upload){ 
 	                        //myXhr.upload.addEventListener('progress', progressHandlingFunction, false); // progressbar
 	                    }
@@ -135,9 +135,9 @@
 	                	App.unblockUI();
 	                	me.ajaxSuccessCallback(response);
 	                },
-	                error: function() {
+	                error: function(jqXHR, textStatus, errorThrown) {
 	                	App.unblockUI();
-	                	me.ajaxErrorCallback(response);
+	                	me.ajaxErrorCallback(errorThrown);
 	                },
 	                data: formData,
 	                cache: false,
@@ -167,8 +167,8 @@
 		},
 		
 		
-		ajaxErrorCallback: function(response) {
-			App.displayMessage('error', 'Request error.');
+		ajaxErrorCallback: function(error_message) {
+			App.displayMessage('error', error_message ? error_message : 'Request error');
 		},
 		
 		addStylesheets: function(css_list) {			
