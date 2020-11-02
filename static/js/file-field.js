@@ -13,6 +13,8 @@
 		me.css = {};
 		me.js = {};
 		
+		me.on_upload_callback = null;
+		
 		if (me.fileApiSupported()) {
 			me.renderField();
 		}
@@ -164,6 +166,10 @@
 			jQuery.each(messages, function(message_idx, message){				
 				App.displayMessage(message.type, message.message);
 			});
+			
+			if(typeof(me.on_upload_callback) == 'function') {
+				me.on_upload_callback(response);
+			}
 		},
 		
 		
@@ -200,6 +206,11 @@
 					me.js[js_path] = 1;
 				}				
 			});
+		},
+		
+		setOnUploadCallback: function(callback) {
+			var me = this;
+			me.on_upload_callback = callback;
 		}
 			
 	}

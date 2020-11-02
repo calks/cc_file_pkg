@@ -9,12 +9,13 @@
 		protected $max_files;
 		protected $entity_existance_check = true;
 		protected $valid_extensions = array();
-		
+				
 		
 		public function __construct($name) {
 			parent::__construct($name);
 			$this->SetValue(md5(uniqid()));
 			$this->addClass('file-form-field');
+			$this->field_object_name = $this->getName() . '_field_' . md5(uniqid());
 		}
 		
 		public function setValue($value) {
@@ -23,6 +24,10 @@
 			//echo('setValue(' . $value . ')');
 		}
 		
+		
+		public function getJSObjectName() {
+			return 'field_' . $this->GetValue();
+		}
 		
 		protected function getParamBlock() {
 			return array(
@@ -56,6 +61,8 @@
 			
 			$attr_string = $this->getAttributesString();
 			
+			$js_object_name = $this->getJSObjectName();
+			
 			$iframe_html = "<iframe name=\"i$field_id\" src=\"$iframe_src\" width=\"$iframe_width\" height=\"$iframe_height\" border=0 style=\"border: none\"></iframe>";
 			return "				
 					<div $attr_string></div>
@@ -67,8 +74,10 @@
 					</noscript>
 				
 					<script type=\"text/javascript\">
+						var $js_object_name = null;
+
 						jQuery(document).ready(function(){
-							var im = new fileField('$this->field_name', '$field_id', '$iframe_src', '$iframe_width', '$iframe_height');
+							$js_object_name = new fileField('$this->field_name', '$field_id', '$iframe_src', '$iframe_width', '$iframe_height');
 						});
 					</script>				
 			";			
